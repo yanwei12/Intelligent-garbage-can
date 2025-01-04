@@ -1,4 +1,4 @@
-# Intelligent-garbage-can
+# Smart Trash Can
 
 **by 顏丞瑋**
 
@@ -24,7 +24,7 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 ---
 
 ## Final Product
-![Final Product](https://hackmd.io/_uploads/HJYsHrrUJl.jpg)
+![Final Product](./images/IMG_4275-2.jpeg)
 
 ---
 
@@ -59,4 +59,3 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 ---
 
 Feel free to clone this repository and adapt it to your needs!
-
