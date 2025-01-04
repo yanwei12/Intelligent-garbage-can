@@ -24,7 +24,7 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 ---
 
 ## Final Product
-![Final Product](./images/IMG_4275-2.jpeg)
+![Final Product](./IMG_4275-2.jpeg)
 
 ---
 
