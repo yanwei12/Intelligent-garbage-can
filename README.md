@@ -48,8 +48,8 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 3. Install the `adafruit_servokit` library on the Raspberry Pi.
 4. Write a Python script to control the servo motors based on object detection from the camera. 注意：樹莓派python版本是3.7.3不能使用較新的套件
 ### Step 4: 樹莓派連接pca9685連接mg996r
----
 ![Add files via upload](./IMG_4277.jpeg)
+---
 -使用pinout查詢樹莓派腳位
 -PCA9685 與 Raspberry Pi
 -PCA9685 的 VCC 跟 Raspberry Pi 的 3.3V 接到麵包版正極
