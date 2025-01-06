@@ -68,10 +68,8 @@ MG996R 的接地線（棕色）接到麵包版負極
 from flask import Flask, request, jsonify, render_template_string
 from adafruit_servokit import ServoKit
 
-# 初始化 PCA9685
 kit = ServoKit(channels=16)
 
-# 定義伺服馬達通道和初始角度
 servo_1 = 0
 servo_2 = 1
 servo_3 = 2
@@ -87,7 +85,6 @@ def move_servo(servo_channel, angle):
 
 app = Flask(__name__)
 
-# 主頁路徑，返回 HTML 界面
 @app.route('/')
 def index():
     return render_template_string("""
@@ -154,14 +151,12 @@ def index():
     </html>
     """)
 
-# API 路徑，用於控制伺服馬達
 @app.route('/move', methods=['POST'])
 def move():
     data = request.json
     servo = data.get("servo")
     angle = data.get("angle")
 
-    # 驗證伺服馬達和角度
     if servo in [servo_1, servo_2, servo_3] and 0 <= angle <= 180:
         servo_angles[servo] = angle
         move_servo(servo, angle)
@@ -192,20 +187,16 @@ from adafruit_servokit import ServoKit
 import cv2
 import time
 
-# 初始化 PCA9685 和攝像頭
 kit = ServoKit(channels=16)
 camera = cv2.VideoCapture(0)
 
-# 定義伺服馬達通道和初始角度
 servo_1 = 0
 servo_2 = 1
 servo_3 = 2
 servo_angles = {servo_1: 90, servo_2: 90, servo_3: 90}  # 初始角度設為 90
 
-# 初始化背景減法
 fgbg = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=25, detectShadows=True)
 
-# 記錄伺服馬達的最後移動時間
 last_move_time = 0
 MOVE_INTERVAL = 5  # 限制間隔時間（秒）
 
@@ -223,22 +214,19 @@ def detect_motion(frame):
     # 應用背景減法
     fgmask = fgbg.apply(frame)
 
-    # 去除噪點（形態學操作）
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-    fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel)  # 去除小斑點
-    fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, kernel)  # 填補空洞
+    fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel) 
+    fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, kernel) 
 
-    # 找出輪廓
     contours, _ = cv2.findContours(fgmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # 設置移動檢測標誌
+
     motion_detected = False
 
     for contour in contours:
-        # 忽略過小的物體
-        if cv2.contourArea(contour) > 1000:  # 根據場景調整閾值
+
+        if cv2.contourArea(contour) > 1000: 
             motion_detected = True
-            # 繪製輪廓（可選，調試時啟用）
             cv2.drawContours(frame, [contour], -1, (0, 255, 0), 2)
 
     return motion_detected, frame
@@ -252,13 +240,10 @@ def generate_frames():
         if not success:
             break
         else:
-            # 翻轉影像（根據需要調整）
             frame = cv2.flip(frame, 0)  # 垂直翻轉
 
-            # 檢測是否有移動物體
             has_motion, frame = detect_motion(frame)
 
-            # 控制伺服馬達
             current_time = time.time()
             if has_motion and (current_time - last_move_time > MOVE_INTERVAL):
                 print("偵測到物體移動，移動伺服馬達。")
@@ -279,11 +264,9 @@ def generate_frames():
                 move_servo(servo_2, 90)
                 move_servo(servo_3, 90)
 
-            # 將幀數據編碼為 JPEG 格式
             _, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
 
-            # 使用 HTTP 的 multipart 格式傳輸幀數據
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
