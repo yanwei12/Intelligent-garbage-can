@@ -49,6 +49,7 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 4. Write a Python script to control the servo motors based on object detection from the camera. 注意：樹莓派python版本是3.7.3不能使用較新的套件
 ### Step 4: 樹莓派連接pca9685連接mg996r
 ---
+![Add files via upload](./IMG_4277.jpeg)
 -使用pinout查詢樹莓派腳位
 -PCA9685 與 Raspberry Pi
 -PCA9685 的 VCC 跟 Raspberry Pi 的 3.3V 接到麵包版正極
@@ -60,7 +61,7 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 -MG996R 的電源線（紅色）接到麵包版正極 三顆馬達都接在同一個正極
 -MG996R 的接地線（棕色）接到麵包版負極
 
-![Add files via upload](./IMG_4277.jpeg)
+
 ### Step 5: 調整馬達角度
 ---
 使用以下程式碼將馬達角度皆調整到90度，再將手臂用螺絲連接上馬達，此時要朝上連接就是以90度去做連接，這樣可以確保所有馬達角度和手臂角度正確
