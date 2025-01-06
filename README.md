@@ -1,4 +1,4 @@
-# Smart Trash Can
+### Intelligent-garbage-can
 
 **by 顏丞瑋**
 
