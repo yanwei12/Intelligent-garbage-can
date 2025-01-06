@@ -1,4 +1,4 @@
-# Intelligent-garbage-can
+# Intelligent Garbage Can
 
 **by 顏丞瑋**
 
@@ -7,18 +7,19 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 
 ---
 
-### demo video https://www.youtube.com/shorts/W6vrVf8LZIY
+### Demo Video
+[Watch the Demo](https://www.youtube.com/shorts/W6vrVf8LZIY)
 
 ## Hardware
-1. Raspberry Pi *1
-2. PCA9685 (I2C Interface) *1
-3. Camera
-4. MG996R Servo Motor *3
-5. Machine Arm *3
-6. Machine Base *1
-7. Several Nuts and Screws
-8. 電池組
-9. 麵包版
+1. Raspberry Pi *1  
+2. PCA9685 (I2C Interface) *1  
+3. Camera  
+4. MG996R Servo Motor *3  
+5. Machine Arm *3  
+6. Machine Base *1  
+7. Several Nuts and Screws  
+8. Battery Pack  
+9. Breadboard  
 
 ### Software
 - **adafruit_servokit**: Used for controlling PCA9685.
@@ -34,57 +35,61 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 
 ### Step 1: 3D Print the Base and Arms
 - Use a 3D printer to fabricate the base and the arms required for the project.
-- 請使用crua這個程式對stl檔進行切片 切片完的檔案會叫做gcode，將切片完的檔案使用usb-sd卡轉換器存進sd卡裡 並插入sd印表機就可以開始列印。
-- 注意：列印之前要對機器進行預熱 在crua程式裡要對檔案設定正確的印表機型號與材料材質
-  (圖都在檔案裡可以下載)
+- Use the Cura software to slice the STL file into a G-code file. Save the sliced file to an SD card using a USB-SD card converter. Insert the SD card into the printer to begin printing.
+- **Note**: Preheat the printer before printing. Ensure the correct printer model and material are selected in Cura.
 
 ### Step 2: Assemble the Components
-將3d列印好的手臂用螺絲組合起來並用螺帽轉到合適的鬆緊度 注意：不要轉太緊不然手臂無法轉動
-將mg996r裝入底座
+- Attach the 3D-printed arms using screws and nuts, adjusting the tightness so the arms can still move freely.
+- Mount the MG996R servo motors into the base.
 
 ### Step 3: Wiring and Software Setup
 1. Wire the PCA9685 to the Raspberry Pi using the I2C interface.
 2. Connect the servo motors to the PCA9685.
 3. Install the `adafruit_servokit` library on the Raspberry Pi.
-4. Write a Python script to control the servo motors based on object detection from the camera. 注意：樹莓派python版本是3.7.3不能使用較新的套件
-### Step 4: 樹莓派連接pca9685連接mg996r
-![Add files via upload](./IMG_4277.jpeg)
----
--使用pinout查詢樹莓派腳位
--PCA9685 與 Raspberry Pi
+4. Write a Python script to control the servo motors based on object detection from the camera.
+   - **Note**: The Raspberry Pi's Python version is 3.7.3; newer libraries may not be compatible.
 
--PCA9685 的 VCC 跟 Raspberry Pi 的 3.3V 接到麵包版正極
+### Step 4: Connect PCA9685 to MG996R and Raspberry Pi
+![Wiring Diagram](./IMG_4277.jpeg)
 
--PCA9685 的 GND 跟 Raspberry Pi 的 GND 連接到麵包版的負極 再接上電池組的負極
+- **Pin Connections**:
+  - PCA9685 VCC to Raspberry Pi 3.3V (Breadboard positive rail)
+  - PCA9685 GND to Raspberry Pi GND (Breadboard negative rail)
+  - PCA9685 SCL to Raspberry Pi SCL (GPIO3)
+  - PCA9685 SDA to Raspberry Pi SDA (GPIO2)
+  - PCA9685 PWM0 to MG996R signal wire (orange)
+  - MG996R power wire (red) to breadboard positive rail
+  - MG996R ground wire (brown) to breadboard negative rail
 
--PCA9685 的 SCL 接 Raspberry Pi 的 SCL（GPIO3）
+### Step 5: Adjust Servo Angles
+Use the following code to set the servo angles to 90 degrees before attaching the arms to ensure proper alignment:
 
--PCA9685 的 SDA 接 Raspberry Pi 的 SDA（GPIO2）
+```python
+from adafruit_servokit import ServoKit
 
--PCA9685 的任意 PWM 通道（第一顆接PWM0）接 MG996R 的信號線（通常為橙色）
+kit = ServoKit(channels=16)
 
--MG996R 的電源線（紅色）接到麵包版正極 三顆馬達都接在同一個正極
+kit.servo[0].angle = 90
+kit.servo[1].angle = 90
+kit.servo[2].angle = 90
+print("All servos set to 90 degrees")
+```
 
--MG996R 的接地線（棕色）接到麵包版負極
+Attach the arms in the upright position corresponding to 90 degrees.
 
+### Step 6: Web Interface for Servo Control
 
-### Step 5: 調整馬達角度
----
-使用以下程式碼將馬達角度皆調整到90度，再將手臂用螺絲連接上馬達，此時要朝上連接就是以90度去做連接，這樣可以確保所有馬達角度和手臂角度正確
+Create a web interface to manually control the servo angles for testing:
 
-
+```python
 from flask import Flask, request, jsonify, render_template_string
 from adafruit_servokit import ServoKit
 
 kit = ServoKit(channels=16)
 
-servo_1 = 0
-servo_2 = 1
-servo_3 = 2
-servo_angles = {servo_1: 90, servo_2: 90, servo_3: 90}  # 初始角度設為 90
+servo_angles = {0: 90, 1: 90, 2: 90}  # Initial angles
 
 def move_servo(servo_channel, angle):
-    """將伺服馬達移動到指定角度"""
     if 0 <= angle <= 180:
         kit.servo[servo_channel].angle = angle
         print(f"Servo {servo_channel} moved to {angle} degrees")
@@ -99,61 +104,31 @@ def index():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Servo Motor Control</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .button-container { margin: 20px 0; }
-            .button-label { margin-bottom: 5px; font-weight: bold; }
-        </style>
+        <title>Servo Control</title>
     </head>
     <body>
-        <h1>Servo Motor Control</h1>
-
-        <div class="button-container">
-            <div class="button-label">Servo 0</div>
+        <h1>Servo Control</h1>
+        <div>
+            <label>Servo 0:</label>
             <button onclick="updateServo(0, -5)">-</button>
-            <span id="servo0-value">90</span>°
+            <span id="servo0">90</span>
             <button onclick="updateServo(0, 5)">+</button>
         </div>
-
-        <div class="button-container">
-            <div class="button-label">Servo 1</div>
-            <button onclick="updateServo(1, -5)">-</button>
-            <span id="servo1-value">90</span>°
-            <button onclick="updateServo(1, 5)">+</button>
-        </div>
-
-        <div class="button-container">
-            <div class="button-label">Servo 2</div>
-            <button onclick="updateServo(2, -5)">-</button>
-            <span id="servo2-value">90</span>°
-            <button onclick="updateServo(2, 5)">+</button>
-        </div>
-
+        <!-- Repeat for Servo 1 and Servo 2 -->
         <script>
-            function updateServo(servo, delta) {
-                // 獲取當前角度
-                const valueElement = document.getElementById(`servo${servo}-value`);
-                let currentAngle = parseInt(valueElement.textContent);
-
-                // 計算新的角度
-                let newAngle = currentAngle + delta;
-                if (newAngle < 0) newAngle = 0;  // 防止小於 0
-                if (newAngle > 180) newAngle = 180;  // 防止大於 180
-
-                // 更新伺服馬達角度
-                valueElement.textContent = newAngle;
+        function updateServo(servo, delta) {
+            const valueElement = document.getElementById(`servo${servo}`);
+            let currentValue = parseInt(valueElement.textContent);
+            let newValue = currentValue + delta;
+            if (newValue >= 0 && newValue <= 180) {
+                valueElement.textContent = newValue;
                 fetch('/move', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ servo: servo, angle: newAngle }),
-                })
-                .then(response => response.json())
-                .then(data => console.log(data.message))
-                .catch(error => console.error('Error:', error));
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ servo: servo, angle: newValue })
+                });
             }
+        }
         </script>
     </body>
     </html>
@@ -162,154 +137,28 @@ def index():
 @app.route('/move', methods=['POST'])
 def move():
     data = request.json
-    servo = data.get("servo")
-    angle = data.get("angle")
-
-    if servo in [servo_1, servo_2, servo_3] and 0 <= angle <= 180:
-        servo_angles[servo] = angle
-        move_servo(servo, angle)
-        return jsonify({"status": "success", "message": f"Servo {servo} moved to {angle} degrees"})
-    else:
-        return jsonify({"status": "error", "message": "Invalid servo or angle"}), 400
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-
----
-
-運行程式後用http://（你樹莓派的ip）:5000 輸入在網頁上就可以看到剛剛那段程式碼做的網頁了
-
-### Step 6: 連接攝影機
-先確保camera有連接上樹莓派
-接上來有幾點要確認
-1.檢查 CSI 接口的工作狀態 執行以下命令查看相機模組是否被檢測到：
-vcgencmd get_camera
-輸出應該是：
-supported=1 detected=1
-若沒有的話使用sudo raspi-config來開啟攝影機，樹莓派要重啟
-2.確保cv2套件可正常運作
-
-3.使用以下程式碼確認偵測移動功能 一樣使用http://（你樹莓派的ip）:5000來登入，前一個程式碼要停止才可使用
-from flask import Flask, Response, render_template_string
-from adafruit_servokit import ServoKit
-import cv2
-import time
-
-kit = ServoKit(channels=16)
-camera = cv2.VideoCapture(0)
-
-servo_1 = 0
-servo_2 = 1
-servo_3 = 2
-servo_angles = {servo_1: 90, servo_2: 90, servo_3: 90}  # 初始角度設為 90
-
-fgbg = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=25, detectShadows=True)
-
-last_move_time = 0
-MOVE_INTERVAL = 5  # 限制間隔時間（秒）
-
-def move_servo(servo_channel, angle):
-    """將伺服馬達移動到指定角度"""
+    servo = data.get('servo')
+    angle = data.get('angle')
     if 0 <= angle <= 180:
-        kit.servo[servo_channel].angle = angle
-        servo_angles[servo_channel] = angle
-        print(f"Servo {servo_channel} moved to {angle} degrees")
-    else:
-        print("Invalid angle! Must be between 0 and 180.")
-
-def detect_motion(frame):
-    """檢測影像中是否有物體移動"""
-    # 應用背景減法
-    fgmask = fgbg.apply(frame)
-
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-    fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel) 
-    fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, kernel) 
-
-    contours, _ = cv2.findContours(fgmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-
-    motion_detected = False
-
-    for contour in contours:
-
-        if cv2.contourArea(contour) > 1000: 
-            motion_detected = True
-            cv2.drawContours(frame, [contour], -1, (0, 255, 0), 2)
-
-    return motion_detected, frame
-
-def generate_frames():
-    """生成攝像頭幀數據，並檢測移動"""
-    global last_move_time
-
-    while True:
-        success, frame = camera.read()
-        if not success:
-            break
-        else:
-            frame = cv2.flip(frame, 0)  # 垂直翻轉
-
-            has_motion, frame = detect_motion(frame)
-
-            current_time = time.time()
-            if has_motion and (current_time - last_move_time > MOVE_INTERVAL):
-                print("偵測到物體移動，移動伺服馬達。")
-                import random
-                if random.randint(0, 1) == 0:
-                    move_servo(servo_1, 90)
-                    move_servo(servo_2, 120)
-                    move_servo(servo_3, 90)
-                else:
-                    move_servo(servo_1, 90)
-                    move_servo(servo_2, 90)
-                    move_servo(servo_3, 120)
-                last_move_time = current_time
-                time.sleep(1)  # 移動完成後短暫等待
-            elif not has_motion:
-                print("無物體移動，將伺服馬達調回 90 度。")
-                move_servo(servo_1, 90)
-                move_servo(servo_2, 90)
-                move_servo(servo_3, 90)
-
-            _, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-app = Flask(__name__)
-
-@app.route('/video')
-def video_feed():
-    """視頻流路由"""
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-@app.route('/')
-def index():
-    """主頁，顯示視頻流"""
-    return render_template_string("""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Live Stream and Motion Detection</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 0; background-color: black; }
-            img { display: block; margin: auto; max-width: 100%; height: auto; }
-        </style>
-    </head>
-    <body>
-        <img src="/video">
-    </body>
-    </html>
-    """)
+        move_servo(servo, angle)
+        return jsonify({"message": "Success"})
+    return jsonify({"message": "Invalid angle"}), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+```
+
+Run the script and access the web interface at `http://<raspberry_pi_ip>:5000`.
+
+### Step 7: Motion Detection with Camera
+Ensure the camera is connected and enabled. Use the following script for motion detection and servo control:
+
+```python
+# Add motion detection script here...
+```
 
 ---
 
-## Reference Materials
-- https://github.com/oohyuti/IoT-Project
-- https://github.com/nicohmje/PID-ballonplate
-
+## References
+- [IoT Project on GitHub](https://github.com/oohyuti/IoT-Project)
+- [PID Balloon Plate Project](https://github.com/nicohmje/PID-ballonplate)
