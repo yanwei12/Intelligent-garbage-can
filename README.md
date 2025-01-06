@@ -49,16 +49,16 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 4. Write a Python script to control the servo motors based on object detection from the camera. 注意：樹莓派python版本是3.7.3不能使用較新的套件
 ### Step 4: 樹莓派連接pca9685連接mg996r
 ---
-使用pinout查詢樹莓派腳位
-PCA9685 與 Raspberry Pi
-PCA9685 的 VCC 跟 Raspberry Pi 的 3.3V 接到麵包版正極
-PCA9685 的 GND 跟 Raspberry Pi 的 GND 連接到麵包版的負極 再接上電池組的負極
-PCA9685 的 SCL 接 Raspberry Pi 的 SCL（GPIO3）
-PCA9685 的 SDA 接 Raspberry Pi 的 SDA（GPIO2）
-PCA9685 與 MG996R
-PCA9685 的任意 PWM 通道（第一顆接PWM0）接 MG996R 的信號線（通常為橙色）
-MG996R 的電源線（紅色）接到麵包版正極 三顆馬達都接在同一個正極
-MG996R 的接地線（棕色）接到麵包版負極
+-使用pinout查詢樹莓派腳位
+-PCA9685 與 Raspberry Pi
+-PCA9685 的 VCC 跟 Raspberry Pi 的 3.3V 接到麵包版正極
+-PCA9685 的 GND 跟 Raspberry Pi 的 GND 連接到麵包版的負極 再接上電池組的負極
+-PCA9685 的 SCL 接 Raspberry Pi 的 SCL（GPIO3）
+-PCA9685 的 SDA 接 Raspberry Pi 的 SDA（GPIO2）
+-PCA9685 與 MG996R
+-PCA9685 的任意 PWM 通道（第一顆接PWM0）接 MG996R 的信號線（通常為橙色）
+-MG996R 的電源線（紅色）接到麵包版正極 三顆馬達都接在同一個正極
+-MG996R 的接地線（棕色）接到麵包版負極
 
 ![Add files via upload](./IMG_4277.jpeg)
 ### Step 5: 調整馬達角度
