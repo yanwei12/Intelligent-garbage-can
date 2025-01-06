@@ -9,7 +9,7 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 
 ### Demo Video
 [Watch the demo](https://www.youtube.com/shorts/W6vrVf8LZIY)
-
+https://www.youtube.com/shorts/W6vrVf8LZIY
 ## Hardware
 1. Raspberry Pi *1
 2. PCA9685 (I2C Interface) *1
