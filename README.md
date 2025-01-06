@@ -1,4 +1,4 @@
-### Intelligent-garbage-can
+# Intelligent-garbage-can
 
 **by 顏丞瑋**
 
@@ -7,9 +7,9 @@ A smart trash can controlled by three motors that tilt the upper platform. A cam
 
 ---
 
-## demo video https://www.youtube.com/shorts/W6vrVf8LZIY
+### demo video https://www.youtube.com/shorts/W6vrVf8LZIY
 
-### Hardware
+## Hardware
 1. Raspberry Pi *1
 2. PCA9685 (I2C Interface) *1
 3. Camera
@@ -60,6 +60,7 @@ PCA9685 的任意 PWM 通道（第一顆接PWM0）接 MG996R 的信號線（通�
 MG996R 的電源線（紅色）接到麵包版正極 三顆馬達都接在同一個正極
 MG996R 的接地線（棕色）接到麵包版負極
 
+(./IMG_4277.jpeg)
 ### Step 5: 調整馬達角度
 ---
 使用以下程式碼將馬達角度皆調整到90度，再將手臂用螺絲連接上馬達，此時要朝上連接就是以90度去做連接，這樣可以確保所有馬達角度和手臂角度正確
